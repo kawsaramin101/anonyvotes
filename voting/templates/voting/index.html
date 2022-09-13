@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .main {
+        margin: 1rem;
+    }
+</style>
+{% endblock head %}
+{% block content %}
+<div class="main">
+    <form method="post" id="question_form">
+        <label for="question">Poll Question:</label><br />
+        <textarea name="question" id="question_box" required rows="4" cols="35"></textarea><br />
+        <button type="submit">Create Question</button>
+    </form>
+    <br />
+    <div id="question_status"></div>
+    <br />
+    <form id="option_form">
+        <label for="option1">Option 1:</label><br />
+        <input type="text" name="option1" required /><br />
+        <label for="option2">Option 2:</label><br>
+        <input type="text" name="option2" required /><br />
+        <div id="insertAdjacentHTMLBeforeMe"></div>
+        <br /><button type="button" id="add_more_option">Add more option</button><br /><br />
+        <button type="submit">Done!</button>
+        <div id="option_status"></div>
+    </form>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+    const questionForm = document.querySelector("#question_form");
+    const questionBox = document.querySelector("#question_box");
+    const questionStatus = document.querySelector("#question_status");
+
+    questionForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const questionStatus = document.querySelector("#question_status");
+        questionStatus.innerText = "Loading..";
+
+        const questionBox = document.querySelector("#question_box");
+
+        axios.post('/add_question/', {
+            question: questionBox.value
+        }, {
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        }).then(function (response) {
+            questionStatus.innerText = "Question created.";
+            sessionStorage.setItem("questionID", response.data.secondary_id)
+        })
+        .catch(function (error) {
+            questionStatus.innerText = "Some error occurred. Try again later.";
+        });
+    });
+
+    const addMoreOptionBtn = document.querySelector("#add_more_option");
+    const insertAdjacentHTMLBeforeMe = document.querySelector("#insertAdjacentHTMLBeforeMe");
+
+    sessionStorage.setItem("totalOptions", 2);
+
+    addMoreOptionBtn.addEventListener("click", function() {
+        const optionNumber = parseInt(sessionStorage.getItem("totalOptions")) + 1;
+        insertAdjacentHTMLBeforeMe.insertAdjacentHTML("beforebegin", `<label for="option${optionNumber}">Option ${optionNumber}:</label><br>
+            <input type="text" name="option${optionNumber}"/><br/>
+            `);
+        sessionStorage.setItem("totalOptions", optionNumber);
+    });
+
+    const optionForm = document.querySelector("#option_form");
+    const optionStatus = document.querySelector('#option_status');
+
+    optionForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        optionStatus.innerText = "Loading..";
+
+        const formData = new FormData(event.target);
+        const formProps = Object.fromEntries(formData);
+        console.log(formProps);
+
+        axios.post("/add_option/", formProps, {
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        }).then(function(response) {
+            window.location.href = `/vote/${sessionStorage.getItem('questionID')}`;
+        }).catch(function(error) {
+            if (error.response) {
+                optionStatus.innerText = error.response.data.message;
+            } else {
+                optionStatus.innerText = "Some error occurred. Try again later.";
+            }
+        })
+    });
+</script>
+
+{% endblock script %}
