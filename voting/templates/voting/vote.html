@@ -15,9 +15,30 @@
     <h4>{{poll.question}}</h4>
     <table>
         {% for option in poll.options.all %}
-        <tr><td><a href="#">{{option.text}}</a></td><td>{{option.vote_percentage|floatformat:"0"}}%</td></tr>
+        <tr><td><a href="#" onclick="vote(event, '{{option.secondary_id}}')">{{option.text}}</a></td><td>{{option.vote_percentage|floatformat:"0"}}%</td></tr>
         {% endfor %}
     </table>
     Total votes:{{poll.total_voters}}
 </div>
 {% endblock content %}
+{% block script %}
+<script>
+    function vote(event, optionSecondaryID) {
+        event.preventDefault();
+        console.log(optionSecondaryID)
+
+        axios.post(window.location.pathname, {
+            option_secondary_id: optionSecondaryID
+        }, {
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        }).then(function(response) {
+            console.log(response);
+        }).catch(function(error) {
+            console.log(error);
+        })
+    }
+
+</script>
+{% endblock script %}

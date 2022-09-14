@@ -80,7 +80,6 @@
 
         const formData = new FormData(event.target);
         const formProps = Object.fromEntries(formData);
-        console.log(formProps);
 
         axios.post("/add_option/", formProps, {
             headers: {

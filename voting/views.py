@@ -40,6 +40,10 @@ def add_option(request):
         else:
             Option.objects.create(text=option_value, poll_id=question)
     if error is None:
+        try:
+            del request.session['current_question']
+        except KeyError:
+            pass
         return HttpResponse("It worked", status=200)
     return JsonResponse({'message': error}, status=400)
 
@@ -48,13 +52,21 @@ def add_option(request):
 def vote(request, question_secondary_id):
     poll = Poll.objects.filter(secondary_id=question_secondary_id).prefetch_related('options').first()
     anonymous_user_id = request.session.get('anonymous_user_id')
+    
     if anonymous_user_id is None:
         anonymous_user = AnonymousUser.objects.create()
+        request.session['anonymous_user_id'] = anonymous_user.id 
     else:
         anonymous_user = AnonymousUser.objects.get(id=anonymous_user_id)
-        request.session['anonymous_user_id'] = anonymous_user.id 
-    #if request.method == "POST":
-        
+    if request.method == "POST":
+        body = json.loads(request.body)
+        print(body)
+        if not poll.options.filter(secondary_id=body['option_secondary_id']).exists():
+            return HttpResponse("Option doesn’t exist in poll options", status=400)
+        for option in poll.options.all():
+            option.voters.remove(anonymous_user)
+        selected_option = Option.objects.get(secondary_id=body["option_secondary_id"])
+        selected_option.voters.add(anonymous_user)
     context = {
         'poll': poll,
         'anonymous_user': anonymous_user,
