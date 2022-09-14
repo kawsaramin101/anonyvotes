@@ -58,17 +58,17 @@ def vote(request, question_secondary_id):
         request.session['anonymous_user_id'] = anonymous_user.id 
     else:
         anonymous_user = AnonymousUser.objects.get(id=anonymous_user_id)
+    context = {
+        'poll': poll,
+        'anonymous_user': anonymous_user,
+    }
     if request.method == "POST":
         body = json.loads(request.body)
-        print(body)
         if not poll.options.filter(secondary_id=body['option_secondary_id']).exists():
             return HttpResponse("Option doesn’t exist in poll options", status=400)
         for option in poll.options.all():
             option.voters.remove(anonymous_user)
         selected_option = Option.objects.get(secondary_id=body["option_secondary_id"])
         selected_option.voters.add(anonymous_user)
-    context = {
-        'poll': poll,
-        'anonymous_user': anonymous_user,
-    }
+        return render(request, 'voting/vote-partial.html', context)
     return render(request, 'voting/vote.html', context)

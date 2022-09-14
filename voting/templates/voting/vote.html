@@ -8,25 +8,30 @@
     .main {
         margin: 1rem;
     }
+    .voted {
+        color: red;
+    }
 </style>
 {% endblock head %}
 {% block content %}
 <div class="main">
     <h4>{{poll.question}}</h4>
-    <table>
-        {% for option in poll.options.all %}
-        <tr><td><a href="#" onclick="vote(event, '{{option.secondary_id}}')">{{option.text}}</a></td><td>{{option.vote_percentage|floatformat:"0"}}%</td></tr>
-        {% endfor %}
-    </table>
-    Total votes:{{poll.total_voters}}
+    <div id="vote_status">Click to vote</div>
+    <div id="poll_details">
+    {% include 'voting/vote-partial.html' %}
+    </div>
 </div>
 {% endblock content %}
 {% block script %}
 <script>
+    const pollStatus = document.querySelector('#vote_status');
+    const pollDetails = document.querySelector('#poll_details');
+    
     function vote(event, optionSecondaryID) {
         event.preventDefault();
+        pollStatus.innerText = "Loading..";
         console.log(optionSecondaryID)
-
+         
         axios.post(window.location.pathname, {
             option_secondary_id: optionSecondaryID
         }, {
@@ -34,9 +39,14 @@
                 'X-CSRFToken': csrftoken
             }
         }).then(function(response) {
-            console.log(response);
+            pollDetails.innerHTML = response.data;
+            pollStatus.innerText = "Voted. Click to change vote."
         }).catch(function(error) {
-            console.log(error);
+            if (error.response) {
+                optionStatus.innerText = error.response.data.message;
+            } else {
+                optionStatus.innerText = "Some error occurred. Try again later.";
+            }
         })
     }
 
