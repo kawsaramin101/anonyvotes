@@ -30,7 +30,6 @@
     function vote(event, optionSecondaryID) {
         event.preventDefault();
         pollStatus.innerText = "Loading..";
-        console.log(optionSecondaryID)
          
         axios.post(window.location.pathname, {
             option_secondary_id: optionSecondaryID

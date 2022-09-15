@@ -29,21 +29,20 @@ def add_option(request):
     question = request.session.get("current_question")
     if question is None:
         error = "Please add a question."
-    options = json.loads(request.body)
-    if not len(options) >= 2 or list(options.values())[0] == "" or list(options.values())[1] == "":
+    options = json.loads(request.body)['options']
+    print(options)
+    #print(options['options'])
+    if  len(options) < 2 or options[0] == "" or options[1] == "":
         error = "Please add at least two options."
     
-    for index, (option_key, option_value) in enumerate(options.items()):
+    for index, option_value in enumerate(options):
         if len(option_value) > 1000:
             error = "Option cannot be larger than 1000 characters."
             break
         else:
             Option.objects.create(text=option_value, poll_id=question)
     if error is None:
-        try:
-            del request.session['current_question']
-        except KeyError:
-            pass
+        del request.session['current_question']
         return HttpResponse("It worked", status=200)
     return JsonResponse({'message': error}, status=400)
 
