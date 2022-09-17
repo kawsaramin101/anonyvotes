@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block head %}
 <style>
     a {
@@ -15,39 +15,18 @@
 {% endblock head %}
 {% block content %}
 <div class="main">
+    <button id="click-to-copy" data-clipboard-text="{{ request.build_absolute_uri }}">Copy link</button>
+    <span id="failed-to-copy"></span>
     <h4>{{poll.question}}</h4>
-    <div id="vote_status">Click to vote</div>
+    <div id="vote_status">
+        Click to vote
+    </div>
     <div id="poll_details">
-    {% include 'voting/vote-partial.html' %}
+        {% include 'voting/vote-partial.html' %}
     </div>
 </div>
 {% endblock content %}
 {% block script %}
-<script>
-    const pollStatus = document.querySelector('#vote_status');
-    const pollDetails = document.querySelector('#poll_details');
-    
-    function vote(event, optionSecondaryID) {
-        event.preventDefault();
-        pollStatus.innerText = "Loading..";
-         
-        axios.post(window.location.pathname, {
-            option_secondary_id: optionSecondaryID
-        }, {
-            headers: {
-                'X-CSRFToken': csrftoken
-            }
-        }).then(function(response) {
-            pollDetails.innerHTML = response.data;
-            pollStatus.innerText = "Voted. Click to change vote."
-        }).catch(function(error) {
-            if (error.response) {
-                optionStatus.innerText = error.response.data.message;
-            } else {
-                optionStatus.innerText = "Some error occurred. Try again later.";
-            }
-        })
-    }
-
-</script>
+<script src="{% static 'js/clipboard.js' %}"></script>
+<script src="{% static 'js/voting/vote.js' %}"></script>
 {% endblock script %}
