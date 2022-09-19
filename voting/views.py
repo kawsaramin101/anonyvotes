@@ -39,7 +39,7 @@ def add_option(request):
         if len(option_value) > 1000:
             error = "Option cannot be larger than 1000 characters."
             break
-        else:
+        elif not option_value=="":
             Option.objects.create(text=option_value, poll_id=question)
     if error is None:
         del request.session['current_question']

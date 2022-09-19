@@ -1,20 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
-{% block head %}
-<style>
-    a {
-        text-decoration: none;
-    }
-    .main {
-        margin: 1rem;
-    }
-    .voted {
-        color: red;
-    }
-</style>
-{% endblock head %}
 {% block content %}
 <div class="main">
+{% if poll %}
     <button id="click-to-copy" data-clipboard-text="{{ request.build_absolute_uri }}">Copy link</button>
     <span id="failed-to-copy"></span>
     <h4>{{poll.question}}</h4>
@@ -24,6 +12,9 @@
     <div id="poll_details">
         {% include 'voting/vote-partial.html' %}
     </div>
+{% else %}
+<div>Poll not found.</div>
+{% endif %}
 </div>
 {% endblock content %}
 {% block script %}
