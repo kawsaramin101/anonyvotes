@@ -1,4 +1,4 @@
-
+/* Question creation script */
 const questionForm = document.querySelector("#question_form");
 const questionBox = document.querySelector("#question_box");
 const questionStatus = document.querySelector("#question_status");
@@ -26,20 +26,29 @@ questionForm.addEventListener("submit", function(event) {
     });
 });
 
-const addMoreOptionBtn = document.querySelector("#add_more_option");
-const insertAdjacentHTMLBeforeMe = document.querySelector("#insertAdjacentHTMLBeforeMe");
+const optionsFormContainer = document.querySelector("#options_form_container");
+const optionForm = document.querySelectorAll(".option_form");
+const addMoreOptionButton = document.querySelector("#add_more_option_button");
+const totalForms = document.querySelector("#id_form-TOTAL_FORMS");
 
-sessionStorage.setItem("totalOptions", 2);
+/* More option form adding scripts */
+let formNum = optionForm.length - 1;
+addMoreOptionButton.addEventListener('click', function(event) {
+    event.preventDefault();
 
-addMoreOptionBtn.addEventListener("click", function() {
-    const optionNumber = parseInt(sessionStorage.getItem("totalOptions")) + 1;
-    insertAdjacentHTMLBeforeMe.insertAdjacentHTML("beforebegin", `<label for="option${optionNumber}">Option${optionNumber}:</label><br><input type="text" name="option${optionNumber}"/><br/>`);
-    sessionStorage.setItem("totalOptions", optionNumber);
+    const newForm = optionForm[0].cloneNode(true); //Clone the option form
+    let formRegex = RegExp(`form-(\\d){1}-`,'g'); //Regex to find all instances of the form number
+
+    formNum++; //Increment the form number
+    newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`);//Update the new form to have the correct form number
+    optionsFormContainer.insertBefore(newForm, addMoreOptionButton); //Insert the new form at the end of the list of forms
+
+    totalForms.setAttribute('value', `${formNum+1}`); //Increment the number of total forms in the management form
 });
 
+/* Option creating scripts */
 const optionsForm = document.querySelector("#options_form_container");
 const optionStatus = document.querySelector('#option_status');
-
 
 optionsForm.addEventListener("submit", function(event) {
     event.preventDefault();
@@ -52,25 +61,22 @@ optionsForm.addEventListener("submit", function(event) {
 
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
-   
-    const options = Object.values(formProps);
+ 
     axios.post("/add_option/", {
-        options: options
+        options: formProps
     }, {
         headers: {
             'X-CSRFToken': csrftoken
         }
     }).then(function(response) {
-        console.log(response);
-        if (response.status===201) {
+        if (response.status === 201) {
             sessionStorage.removeItem("questionID");
             window.location.href = `/vote/${questionID}/`;
         } else {
-            console.log(response.data);
             optionsForm.innerHTML = response.data;
+            optionStatus.innerText = "";
         }
     }).catch(function(error) {
-        console.log(error)
         if (error.response) {
             optionStatus.innerText = error.response.data.message;
         } else {
@@ -78,37 +84,3 @@ optionsForm.addEventListener("submit", function(event) {
         }
     });
 });
-/*
-const optionForm = document.querySelector("#option_form");
-const optionStatus = document.querySelector('#option_status');
-
-optionForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-    const questionID = sessionStorage.getItem("questionID");
-    if (!questionID) {
-        optionStatus.innerText = "Please add a question first.";
-        return;
-    }
-    optionStatus.innerText = "Loading..";
-
-    const formData = new FormData(event.target);
-    const formProps = Object.fromEntries(formData);
-   
-    const options = Object.values(formProps);
-    axios.post("/add_option/", {
-        options: options
-    }, {
-        headers: {
-            'X-CSRFToken': csrftoken
-        }
-    }).then(function(response) {
-        sessionStorage.removeItem("questionID");
-        window.location.href = `/vote/${questionID}/`;
-    }).catch(function(error) {
-        if (error.response) {
-            optionStatus.innerText = error.response.data.message;
-        } else {
-            optionStatus.innerText = "Some error occurred. Try again later.";
-        }
-    });
-});*/

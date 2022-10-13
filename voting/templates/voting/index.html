@@ -12,15 +12,6 @@
     <br />
     {% include "voting/partials/options-form.html" %}
     <div id="option_status"></div>
-   <!--   <form id="option_form">
-        <label for="option1">Option 1:</label><br />
-        <input type="text" name="option1" required /><br />
-        <label for="option2">Option 2:</label><br>
-        <input type="text" name="option2" required /><br />
-        <div id="insertAdjacentHTMLBeforeMe"></div>
-        <br />
-        <button type="submit">Done!</button>
-    </form>-->
 </div>
 {% endblock content %}
 {% block script %}
@@ -72,19 +63,7 @@
     
         totalForms.setAttribute('value', `${formNum+1}`) //Increment the number of total forms in the management form
     });
-    /*
-    const addMoreOptionBtn = document.querySelector("#add_more_option");
-    const insertAdjacentHTMLBeforeMe = document.querySelector("#insertAdjacentHTMLBeforeMe");
 
-    sessionStorage.setItem("totalOptions", 2);
-
-    addMoreOptionBtn.addEventListener("click", function() {
-        const optionNumber = parseInt(sessionStorage.getItem("totalOptions")) + 1;
-        insertAdjacentHTMLBeforeMe.insertAdjacentHTML("beforebegin", `<label for="option${optionNumber}">Option ${optionNumber}: </label><br><input type="text" name="option${optionNumber}"/><br/>`);
-        sessionStorage.setItem("totalOptions",
-            optionNumber);
-    });*/
-    
     /* Option creating scripts */
     const optionsForm = document.querySelector("#options_form_container");
     const optionStatus = document.querySelector('#option_status');
@@ -102,8 +81,7 @@
 
         const formData = new FormData(event.target);
         const formProps = Object.fromEntries(formData);
-        console.log(formProps);
-        //const options = Object.values(formProps);
+     
         axios.post("/add_option/", {
             options: formProps
         }, {
@@ -126,39 +104,6 @@
             }
         });
     });
-    /*
-const optionForm = document.querySelector("#option_form");
-const optionStatus = document.querySelector('#option_status');
-
-optionForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-    const questionID = sessionStorage.getItem("questionID");
-    if (!questionID) {
-        optionStatus.innerText = "Please add a question first.";
-        return;
-    }
-    optionStatus.innerText = "Loading..";
-
-    const formData = new FormData(event.target);
-    const formProps = Object.fromEntries(formData);
-    const options = Object.values(formProps);
-    axios.post("/add_option/", {
-        options: options
-    }, {
-        headers: {
-            'X-CSRFToken': csrftoken
-        }
-    }).then(function(response) {
-        sessionStorage.removeItem("questionID");
-        window.location.href = `/vote/${questionID}/`;
-    }).catch(function(error) {
-        if (error.response) {
-            optionStatus.innerText = error.response.data.message;
-        } else {
-            optionStatus.innerText = "Some error occurred. Try again later.";
-        }
-    });
-});*/
 </script>
 <!--
 <script src="{% static 'js/voting/index.js' %}" defer></script>
