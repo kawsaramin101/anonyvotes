@@ -10,18 +10,159 @@
     <br />
     <div id="question_status"></div>
     <br />
-    <form id="option_form">
+    {% include "voting/partials/options-form.html" %}
+    <div id="option_status"></div>
+   <!--   <form id="option_form">
         <label for="option1">Option 1:</label><br />
         <input type="text" name="option1" required /><br />
         <label for="option2">Option 2:</label><br>
         <input type="text" name="option2" required /><br />
         <div id="insertAdjacentHTMLBeforeMe"></div>
-        <br /><button type="button" id="add_more_option">Add more option</button><br /><br />
+        <br />
         <button type="submit">Done!</button>
-        <div id="option_status"></div>
-    </form>
+    </form>-->
 </div>
 {% endblock content %}
 {% block script %}
+<script>
+    /* Question creation script */
+    const questionForm = document.querySelector("#question_form");
+    const questionBox = document.querySelector("#question_box");
+    const questionStatus = document.querySelector("#question_status");
+
+    questionForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const questionStatus = document.querySelector("#question_status");
+        questionStatus.innerText = "Loading..";
+
+        const questionBox = document.querySelector("#question_box");
+
+        axios.post('/add_question/', {
+            question: questionBox.value
+        }, {
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        }).then(function (response) {
+            questionStatus.innerText = "Question created.";
+            sessionStorage.setItem("questionID", response.data.secondary_id);
+        })
+        .catch(function (error) {
+            questionStatus.innerText = "Some error occurred. Try again later.";
+        });
+    });
+    
+    const optionsFormContainer = document.querySelector("#options_form_container");
+    const optionForm = document.querySelectorAll(".option_form");
+    const addMoreOptionButton = document.querySelector("#add_more_option_button");
+    const totalForms = document.querySelector("#id_form-TOTAL_FORMS");
+    
+    let formNum = optionForm.length - 1;
+    addMoreOptionButton.addEventListener('click', function(event) {
+        event.preventDefault()
+    
+        let newForm = optionForm[0].cloneNode(true) //Clone the bird form
+        let formRegex = RegExp(`form-(\\d){1}-`,'g') //Regex to find all instances of the form number
+    
+        formNum++ //Increment the form number
+        newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`) //Update the new form to have the correct form number
+        optionsFormContainer.insertBefore(newForm, addMoreOptionButton) //Insert the new form at the end of the list of forms
+    
+        totalForms.setAttribute('value', `${formNum+1}`) //Increment the number of total forms in the management form
+    });
+    /* More option form adding scripts *//*
+    const addMoreOptionBtn = document.querySelector("#add_more_option");
+    const insertAdjacentHTMLBeforeMe = document.querySelector("#insertAdjacentHTMLBeforeMe");
+
+    sessionStorage.setItem("totalOptions", 2);
+
+    addMoreOptionBtn.addEventListener("click", function() {
+        const optionNumber = parseInt(sessionStorage.getItem("totalOptions")) + 1;
+        insertAdjacentHTMLBeforeMe.insertAdjacentHTML("beforebegin", `<label for="option${optionNumber}">Option ${optionNumber}: </label><br><input type="text" name="option${optionNumber}"/><br/>`);
+        sessionStorage.setItem("totalOptions",
+            optionNumber);
+    });*/
+    
+    /* Option creating scripts */
+    const optionsForm = document.querySelector("#options_form_container");
+    const optionStatus = document.querySelector('#option_status');
+    
+    console.log(optionsForm)
+    
+    optionsForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+        const questionID = sessionStorage.getItem("questionID");
+        if (!questionID) {
+            optionStatus.innerText = "Please add a question first.";
+            return;
+        }
+        optionStatus.innerText = "Loading..";
+
+        const formData = new FormData(event.target);
+        const formProps = Object.fromEntries(formData);
+        console.log(formProps);
+        //const options = Object.values(formProps);
+        axios.post("/add_option/", {
+            options: formProps
+        }, {
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        }).then(function(response) {
+            console.log(response);
+            if (response.status === 201) {
+                sessionStorage.removeItem("questionID");
+                window.location.href = `/vote/$ {
+                    questionID
+                }/`;
+            } else {
+                console.log(response.data);
+                optionsForm.innerHTML = response.data;
+            }
+        }).catch(function(error) {
+            console.log(error)
+            if (error.response) {
+                optionStatus.innerText = error.response.data.message;
+            } else {
+                optionStatus.innerText = "Some error occurred. Try again later.";
+            }
+        });
+    });
+    /*
+const optionForm = document.querySelector("#option_form");
+const optionStatus = document.querySelector('#option_status');
+
+optionForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    const questionID = sessionStorage.getItem("questionID");
+    if (!questionID) {
+        optionStatus.innerText = "Please add a question first.";
+        return;
+    }
+    optionStatus.innerText = "Loading..";
+
+    const formData = new FormData(event.target);
+    const formProps = Object.fromEntries(formData);
+    const options = Object.values(formProps);
+    axios.post("/add_option/", {
+        options: options
+    }, {
+        headers: {
+            'X-CSRFToken': csrftoken
+        }
+    }).then(function(response) {
+        sessionStorage.removeItem("questionID");
+        window.location.href = `/vote/${questionID}/`;
+    }).catch(function(error) {
+        if (error.response) {
+            optionStatus.innerText = error.response.data.message;
+        } else {
+            optionStatus.innerText = "Some error occurred. Try again later.";
+        }
+    });
+});*/
+</script>
+<!--
 <script src="{% static 'js/voting/index.js' %}" defer></script>
-{% endblock script %}
+-->{% endblock script %}

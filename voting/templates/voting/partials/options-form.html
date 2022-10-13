@@ -1,0 +1,16 @@
+<form id="options_form_container">
+    {% for hidden in optionformset.hidden_fields %}
+    {{hidden}}
+    {% endfor %}
+    {{optionformset.management_form}}
+    {% for optionform in optionformset %}
+    <div class="option_form">
+        {% for hidden in optionform.hidden_fields %}
+        {{hidden}}
+        {% endfor %}
+        {{optionform.as_p}}
+    </div>
+    {% endfor %}
+    <button type="button" id="add_more_option_button">Add more option</button><br /><br />
+    <button type="submit">Create Options</button>
+</form>

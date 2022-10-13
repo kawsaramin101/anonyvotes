@@ -5,11 +5,15 @@ from django.core import serializers
 from django.views.decorators.http import require_http_methods 
 
 from .models import Poll, Option, AnonymousUser
-from .forms import QuestionForm
+from .forms import QuestionForm, OptionFormSet
 
 
 def index(request):
-    return render(request, 'voting/index.html',)
+    optionformset = OptionFormSet(queryset=Option.objects.none())
+    context = {
+        'optionformset': optionformset
+    }
+    return render(request, 'voting/index.html', context)
 
 
 @require_http_methods(["POST"])
@@ -23,6 +27,28 @@ def add_question(request):
     return HttpResponse("Something went wrong", status=400)
 
 
+@require_http_methods(["POST"])
+def add_option2(request):
+    error = None
+    question_id = request.session.get("current_question")
+    if question_id is None:
+        error = "Please add a question."
+    if error is None:
+        print(request.POST)
+        optionformset = OptionFormSet(data=request.POST)
+        
+        if optionformset.is_valid():
+            instances = optionformset.save(commit=False)
+            for instance in instances:
+                instance.poll_id = question_id
+                instance.save()
+            del request.session['current_question']
+            return HttpResponse("It worked", status=201)
+        print(optionformset)
+        return render(request, 'voting/partials/options-form.html',  {'optionformset': optionformset})
+    return HttpResponse(f"{error}", status=400)
+    
+    
 @require_http_methods(["POST"])
 def add_option(request):
     error = None

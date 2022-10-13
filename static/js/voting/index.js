@@ -37,6 +37,48 @@ addMoreOptionBtn.addEventListener("click", function() {
     sessionStorage.setItem("totalOptions", optionNumber);
 });
 
+const optionsForm = document.querySelector("#options_form_container");
+const optionStatus = document.querySelector('#option_status');
+
+
+optionsForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    const questionID = sessionStorage.getItem("questionID");
+    if (!questionID) {
+        optionStatus.innerText = "Please add a question first.";
+        return;
+    }
+    optionStatus.innerText = "Loading..";
+
+    const formData = new FormData(event.target);
+    const formProps = Object.fromEntries(formData);
+   
+    const options = Object.values(formProps);
+    axios.post("/add_option/", {
+        options: options
+    }, {
+        headers: {
+            'X-CSRFToken': csrftoken
+        }
+    }).then(function(response) {
+        console.log(response);
+        if (response.status===201) {
+            sessionStorage.removeItem("questionID");
+            window.location.href = `/vote/${questionID}/`;
+        } else {
+            console.log(response.data);
+            optionsForm.innerHTML = response.data;
+        }
+    }).catch(function(error) {
+        console.log(error)
+        if (error.response) {
+            optionStatus.innerText = error.response.data.message;
+        } else {
+            optionStatus.innerText = "Some error occurred. Try again later.";
+        }
+    });
+});
+/*
 const optionForm = document.querySelector("#option_form");
 const optionStatus = document.querySelector('#option_status');
 
@@ -60,8 +102,8 @@ optionForm.addEventListener("submit", function(event) {
             'X-CSRFToken': csrftoken
         }
     }).then(function(response) {
-        window.location.href = `/vote/${questionID}/`;
         sessionStorage.removeItem("questionID");
+        window.location.href = `/vote/${questionID}/`;
     }).catch(function(error) {
         if (error.response) {
             optionStatus.innerText = error.response.data.message;
@@ -69,4 +111,4 @@ optionForm.addEventListener("submit", function(event) {
             optionStatus.innerText = "Some error occurred. Try again later.";
         }
     });
-});
+});*/
