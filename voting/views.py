@@ -28,7 +28,7 @@ def add_question(request):
 
 
 @require_http_methods(["POST"])
-def add_option2(request):
+def add_option(request):
     error = None
     question_id = request.session.get("current_question")
     if question_id is None:
@@ -47,31 +47,6 @@ def add_option2(request):
         print(optionformset)
         return render(request, 'voting/partials/options-form.html',  {'optionformset': optionformset})
     return HttpResponse(f"{error}", status=400)
-    
-    
-@require_http_methods(["POST"])
-def add_option(request):
-    error = None
-    question = request.session.get("current_question")
-    if question is None:
-        error = "Please add a question."
-    options = json.loads(request.body)['options']
-    print(options)
-    #print(options['options'])
-    if  len(options) < 2 or options[0] == "" or options[1] == "":
-        error = "Please add at least two options."
-    
-    for index, option_value in enumerate(options):
-        if len(option_value) > 1000:
-            error = "Option cannot be larger than 1000 characters."
-            break
-        elif not option_value=="":
-            Option.objects.create(text=option_value, poll_id=question)
-    if error is None:
-        del request.session['current_question']
-        return HttpResponse("It worked", status=200)
-    return JsonResponse({'message': error}, status=400)
-
     
     
 def vote(request, question_secondary_id):
