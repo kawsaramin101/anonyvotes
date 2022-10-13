@@ -34,8 +34,8 @@ def add_option2(request):
     if question_id is None:
         error = "Please add a question."
     if error is None:
-        print(request.POST)
-        optionformset = OptionFormSet(data=request.POST)
+        data = json.loads(request.body)['options']
+        optionformset = OptionFormSet(data=data)
         
         if optionformset.is_valid():
             instances = optionformset.save(commit=False)
