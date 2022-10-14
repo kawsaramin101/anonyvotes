@@ -44,7 +44,6 @@ def add_option(request):
                 instance.save()
             del request.session['current_question']
             return HttpResponse("It worked", status=201)
-        print(optionformset)
         return render(request, 'voting/partials/options-form.html',  {'optionformset': optionformset})
     return HttpResponse(f"{error}", status=400)
     

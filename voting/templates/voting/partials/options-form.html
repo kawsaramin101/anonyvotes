@@ -8,9 +8,12 @@
         {% for hidden in optionform.hidden_fields %}
         {{hidden}}
         {% endfor %}
-        {{optionform.as_p}}
+        {{ optionform.non_field_errors }}
+        <label for="{{optionform.text.id_for_label}}">Option {{forloop.counter}}:</label>
+        {{optionform.text}}
+        {{optionform.text.errors}}
     </div>
     {% endfor %}
     <button type="button" id="add_more_option_button">Add more option</button><br /><br />
-    <button type="submit">Create Options</button>
+    <button type="submit">Create </button>
 </form>

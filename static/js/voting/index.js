@@ -26,23 +26,22 @@ questionForm.addEventListener("submit", function(event) {
     });
 });
 
-const optionsFormContainer = document.querySelector("#options_form_container");
-const optionForm = document.querySelectorAll(".option_form");
-const addMoreOptionButton = document.querySelector("#add_more_option_button");
-const totalForms = document.querySelector("#id_form-TOTAL_FORMS");
-
 /* More option form adding scripts */
-let formNum = optionForm.length - 1;
+const addMoreOptionButton = document.querySelector("#add_more_option_button");
+
 addMoreOptionButton.addEventListener('click', function(event) {
-    event.preventDefault();
-
-    const newForm = optionForm[0].cloneNode(true); //Clone the option form
-    let formRegex = RegExp(`form-(\\d){1}-`,'g'); //Regex to find all instances of the form number
-
-    formNum++; //Increment the form number
-    newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`);//Update the new form to have the correct form number
-    optionsFormContainer.insertBefore(newForm, addMoreOptionButton); //Insert the new form at the end of the list of forms
-
+    event.preventDefault(); 
+  
+    const totalForms = document.querySelector("#id_form-TOTAL_FORMS");
+    const formNum = parseInt(totalForms.value);
+    
+    const newForm = `
+        <div class="option_form">
+            <input type="hidden" name="form-${formNum}-id" id="id_form-${formNum}-id">
+            <label for="id_form-${formNum}-text">Option ${formNum+1}:</label>
+            <input type="text" name="form-${formNum}-text" maxlength="1000" id="id_form-${formNum}-text">
+        </div>`;
+    addMoreOptionButton.insertAdjacentHTML("beforebegin", newForm);
     totalForms.setAttribute('value', `${formNum+1}`); //Increment the number of total forms in the management form
 });
 
