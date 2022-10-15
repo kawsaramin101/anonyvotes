@@ -17,7 +17,7 @@ input[type=text], textarea, select {
     box-sizing: border-box;
 }
 button {
-   /* width: 100%;*/
+    /* width: 100%;*/
     align-self: center;
     background-color: #4CAF50;
     color: white;
@@ -29,4 +29,36 @@ button {
 }
 input[type=submit]:hover {
     background-color: #45a049;
+}
+#options {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+#options td, #options th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+#options tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+#options tr:hover {
+    background-color: #ddd;
+}
+#options th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04AA6D;
+    color: white;
+}
+.custom-card {
+    padding: 1rem;
+    background: white;
+    border: 1px solid #D3D3D3;
+    border-radius: .25rem;
+    overflow: hidden;
+}
+.text-center {
+    text-align: center;
 }
