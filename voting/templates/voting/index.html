@@ -1,16 +1,19 @@
 {% extends "base.html" %}
 {% load static %}
+{% load cache %}
+{% cache None index %}
 {% block content %}
 <div class="main">
     <form method="post" id="question_form">
         <label for="question">Poll Question:</label><br />
         <textarea name="question" id="question_box" required rows="4" cols="35"></textarea><br />
-        <button type="submit">Create Question</button>
+        <div class="btn-center">
+            <button type="submit">Create Question</button>
+        </div>
     </form>
     <br />
     <div id="question_status"></div>
     <br />
-    
     {% include "voting/partials/options-form.html" %}
     <div id="option_status"></div>
 </div>
@@ -18,3 +21,4 @@
 {% block script %}
 <script src="{% static 'js/voting/index.js' %}" defer></script>
 {% endblock script %}
+{% endcache %}

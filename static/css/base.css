@@ -16,6 +16,10 @@ input[type=text], textarea, select {
     border-radius: 4px;
     box-sizing: border-box;
 }
+.btn-center {
+    display: flex;
+    justify-content: center;
+}
 button {
     /* width: 100%;*/
     align-self: center;
