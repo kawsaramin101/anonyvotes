@@ -34,7 +34,7 @@ def add_option(request):
     if question_id is None:
         error = "Please add a question."
     if error is None:
-        data = json.loads(request.body)['options']
+        data = json.loads(request.body).get('options')
         optionformset = OptionFormSet(data=data)
         
         if optionformset.is_valid():
@@ -63,7 +63,7 @@ def vote(request, question_secondary_id):
     }
     if request.method == "POST":
         body = json.loads(request.body)
-        if not poll.options.filter(secondary_id=body['option_secondary_id']).exists():
+        if not poll.options.filter(secondary_id=body.get('option_secondary_id')).exists():
             return HttpResponse("Option doesn’t exist in poll options", status=400)
         for option in poll.options.all():
             option.voters.remove(anonymous_user)

@@ -1,6 +1,6 @@
-<table>
+<table id="options">
     {% for option in poll.options.all %}
     <tr><td><a href="#" class="{% if anonymous_user in option.voters.all %}voted{% endif %}" onclick="vote(event, '{{option.secondary_id}}')">{{option.text}}</a></td><td>{{option.vote_percentage|floatformat:"0"}}%</td></tr>
     {% endfor %}
 </table>
-Total votes:{{poll.total_voters}}
+<p class="text-center">Total votes:{{poll.total_voters}}</p>

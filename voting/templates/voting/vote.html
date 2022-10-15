@@ -2,19 +2,23 @@
 {% load static %}
 {% block content %}
 <div class="main">
-{% if poll %}
+    {% if poll %}
     <button id="click-to-copy" data-clipboard-text="{{ request.build_absolute_uri }}">Copy link</button>
     <span id="failed-to-copy"></span>
-    <h4>{{poll.question}}</h4>
-    <div id="vote_status">
-        Click to vote
+    <div class="custom-card">
+        <h3 class="text-center">{{poll.question}}</h3>
+        <div id="vote_status">
+            Click to vote
+        </div>
+        <div id="poll_details">
+            {% include 'voting/vote-partial.html' %}
+        </div>
     </div>
-    <div id="poll_details">
-        {% include 'voting/vote-partial.html' %}
+    {% else %}
+    <div>
+        Poll not found.
     </div>
-{% else %}
-<div>Poll not found.</div>
-{% endif %}
+    {% endif %}
 </div>
 {% endblock content %}
 {% block script %}

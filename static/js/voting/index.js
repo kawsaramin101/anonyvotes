@@ -42,7 +42,7 @@ addMoreOptionButton.addEventListener('click', function(event) {
             <input type="text" name="form-${formNum}-text" maxlength="1000" id="id_form-${formNum}-text">
         </div>`;
     addMoreOptionButton.insertAdjacentHTML("beforebegin", newForm);
-    totalForms.setAttribute('value', `${formNum+1}`); //Increment the number of total forms in the management form
+    totalForms.setAttribute('value', `${formNum+1}`); 
 });
 
 /* Option creating scripts */

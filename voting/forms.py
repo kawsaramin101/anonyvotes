@@ -16,5 +16,5 @@ class ChoiceForm(forms.Form):
     
 
 OptionFormSet = modelformset_factory(
-    Option, fields=("text", ), extra=2, labels={"text": "Option"}, max_num=30, min_num=2
+    Option, fields=("text", ), min_num=2, max_num=30,
 )

@@ -34,7 +34,7 @@ class Option(models.Model):
             return (self.voters.count() / self.poll.total_voters) * 100
         return 0
     
-class AnonymousUser(models.Model):
     
+class AnonymousUser(models.Model):
     secondary_id = models.UUIDField(default=uuid.uuid4, editable=False)
     
