@@ -49,7 +49,10 @@ def add_option(request):
 
     
 def vote(request, question_secondary_id):
-    poll = Poll.objects.filter(secondary_id=question_secondary_id).prefetch_related('options', 'votes').first()
+    try:
+        poll = Poll.objects.filter(secondary_id=question_secondary_id).prefetch_related('options', 'votes').first()
+    except:
+        poll = None
     anonymous_user_id = request.session.get('anonymous_user_id')
     
     if anonymous_user_id is None:
@@ -72,7 +75,8 @@ def vote(request, question_secondary_id):
             vote.delete()
         selected_option = Option.objects.get(secondary_id=body.get("option_secondary_id"))
         new_vote = Vote.objects.create(poll=poll, option=selected_option, voter=anonymous_user)
-        context["prev_selected_option"] = selected_option
+        context['poll'] = Poll.objects.filter(secondary_id=question_secondary_id).prefetch_related('options', 'votes').first()
+        context['prev_selected_option'] = selected_option 
         return render(request, 'voting/partials/vote-partial.html', context)
     return render(request, 'voting/vote.html', context)
     

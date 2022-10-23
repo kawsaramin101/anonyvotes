@@ -20,7 +20,6 @@ class Option(models.Model):
     secondary_id = models.UUIDField(default=uuid.uuid4, editable=False)
     text = models.CharField(max_length=1000)
     poll = models.ForeignKey(Poll, null=False, blank=False, related_name="options", on_delete=models.CASCADE)
-    #voters = models.ManyToManyField("AnonymousUser", related_name="voted_options")
     
     def __str__(self):
         return self.text
@@ -45,6 +44,3 @@ class Vote(models.Model):
     voter = models.ForeignKey(AnonymousUser, null=False, blank=False, related_name="votes", on_delete=models.CASCADE)
     
     
-    #vote = Vote.objects.get(poll=poll)
-    #if vote.options != selected_option:
-        #vote.delete
