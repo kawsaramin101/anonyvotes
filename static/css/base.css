@@ -21,7 +21,6 @@ input[type=text], textarea, select {
     justify-content: center;
 }
 button {
-    /* width: 100%;*/
     align-self: center;
     background-color: #4CAF50;
     color: white;
@@ -31,7 +30,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
 }
-input[type=submit]:hover {
+button:hover {
     background-color: #45a049;
 }
 #options {

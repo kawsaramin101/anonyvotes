@@ -16,9 +16,13 @@ function vote(event, optionSecondaryID) {
         pollStatus.innerText = "Voted. Click to change vote.";
     }).catch(function(error) {
         if (error.response) {
+            if (error.response.status>=500) {
+                optionStatus.innerText = "Server error occurred.";
+            } else {
             optionStatus.innerText = error.response.data.message;
+            }
             return;
-        }
+        } 
         optionStatus.innerText = "Some error occurred. Try again later.";
     });
 }

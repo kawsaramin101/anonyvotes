@@ -1,7 +1,4 @@
 <form id="options_form_container">
-    {% for hidden in optionformset.hidden_fields %}
-    {{hidden}}
-    {% endfor %}
     {{optionformset.management_form}}
     {% for optionform in optionformset %}
     <div class="option_form">

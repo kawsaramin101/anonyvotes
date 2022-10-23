@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers 
 from django.views.decorators.http import require_http_methods 
 
-from .models import Poll, Option, AnonymousUser
+from .models import Poll, Option, AnonymousUser, Vote
 from .forms import QuestionForm, OptionFormSet
 
 
@@ -46,10 +46,10 @@ def add_option(request):
             return HttpResponse("It worked", status=201)
         return render(request, 'voting/partials/options-form.html',  {'optionformset': optionformset})
     return HttpResponse(f"{error}", status=400)
-    
+
     
 def vote(request, question_secondary_id):
-    poll = Poll.objects.filter(secondary_id=question_secondary_id).prefetch_related('options').first()
+    poll = Poll.objects.filter(secondary_id=question_secondary_id).prefetch_related('options', 'votes').first()
     anonymous_user_id = request.session.get('anonymous_user_id')
     
     if anonymous_user_id is None:
@@ -57,17 +57,23 @@ def vote(request, question_secondary_id):
         request.session['anonymous_user_id'] = anonymous_user.id 
     else:
         anonymous_user = AnonymousUser.objects.get(id=anonymous_user_id)
+    prev_vote = anonymous_user.votes.filter(poll=poll)
     context = {
         'poll': poll,
         'anonymous_user': anonymous_user,
+        'prev_selected_option': prev_vote.first().option if prev_vote.exists() else None
     }
     if request.method == "POST":
         body = json.loads(request.body)
-        if not poll.options.filter(secondary_id=body.get('option_secondary_id')).exists():
+        if not poll.options.filter(secondary_id=body.get("option_secondary_id")).exists():
             return HttpResponse("Option doesn’t exist in poll options", status=400)
-        for option in poll.options.all():
-            option.voters.remove(anonymous_user)
-        selected_option = Option.objects.get(secondary_id=body["option_secondary_id"])
-        selected_option.voters.add(anonymous_user)
-        return render(request, 'voting/vote-partial.html', context)
+        vote = Vote.objects.filter(poll=poll, voter=anonymous_user)
+        if vote.exists():
+            vote.delete()
+        selected_option = Option.objects.get(secondary_id=body.get("option_secondary_id"))
+        new_vote = Vote.objects.create(poll=poll, option=selected_option, voter=anonymous_user)
+        context["prev_selected_option"] = selected_option
+        return render(request, 'voting/partials/vote-partial.html', context)
     return render(request, 'voting/vote.html', context)
+    
+        
