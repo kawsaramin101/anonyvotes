@@ -47,12 +47,17 @@ def add_option(request):
         return render(request, 'voting/partials/options-form.html',  {'optionformset': optionformset})
     return HttpResponse(f"{error}", status=400)
 
+
+def get_poll(secondary_id):
+    try:
+        poll = Poll.objects.filter(secondary_id=secondary_id).prefetch_related('options', 'votes').first()
+    except:
+        poll = None 
+    return poll 
+    
     
 def vote(request, question_secondary_id):
-    try:
-        poll = Poll.objects.filter(secondary_id=question_secondary_id).prefetch_related('options', 'votes').first()
-    except:
-        poll = None
+    poll = get_poll(question_secondary_id)
     anonymous_user_id = request.session.get('anonymous_user_id')
     
     if anonymous_user_id is None:
@@ -75,7 +80,7 @@ def vote(request, question_secondary_id):
             vote.delete()
         selected_option = Option.objects.get(secondary_id=body.get("option_secondary_id"))
         new_vote = Vote.objects.create(poll=poll, option=selected_option, voter=anonymous_user)
-        context['poll'] = Poll.objects.filter(secondary_id=question_secondary_id).prefetch_related('options', 'votes').first()
+        context['poll'] = get_poll(question_secondary_id)
         context['prev_selected_option'] = selected_option 
         return render(request, 'voting/partials/vote-partial.html', context)
     return render(request, 'voting/vote.html', context)
