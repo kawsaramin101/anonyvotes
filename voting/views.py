@@ -50,7 +50,7 @@ def add_option(request):
 
 def get_poll(secondary_id):
     try:
-        poll = Poll.objects.filter(secondary_id=secondary_id).prefetch_related('options', 'votes').first()
+        poll = Poll.objects.prefetch_related('options', 'votes').get(secondary_id=secondary_id)
     except:
         poll = None 
     return poll 
