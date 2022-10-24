@@ -5,8 +5,8 @@
     {% if poll %}
     <button id="click-to-copy" data-clipboard-text="{{ request.build_absolute_uri }}">Copy link</button>
     <span id="failed-to-copy"></span>
-    <div class="custom-card">
-        <h3 class="text-center">{{poll.question}}</h3>
+    <div class="custom-card poll">
+        <h3 class="text-center question">{{poll.question}}</h3>
         <div id="vote_status">
             Click to vote
         </div>
