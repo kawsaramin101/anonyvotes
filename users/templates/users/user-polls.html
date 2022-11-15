@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<main class="main">
+    Total polls created: {{polls.count}}<br />
+    Open polls: {{open_polls}}<br />
+    Closed polls: {{closed_polls}}<br /><br />
+    <div class="btn-center">
+        <button>
+            <a href="{% url 'voting:index' %}" class="link-no-color">Create new poll</a>
+        </button>
+    </div>
+    <br />
+    <table>
+        <tr>
+            <th>Poll name</th>
+            <th>Total votes</th>
+            <th>Status/Action</th>
+        </tr>
+        {% for poll in polls %}
+        <tr>
+            <td>
+                <a href="{% url 'voting:vote' poll.secondary_id %}">{{poll.question}}</a>
+            </td>
+            <td>
+                {{poll.total_voters}}
+            </td>
+            <td>
+                <input type="checkbox" name="poll_id" value="{{poll.secondary_id}}" {% if not poll.is_open %}checked{% endif %}><label for="poll_id">Close poll</label>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</main>
+{% endblock content %}

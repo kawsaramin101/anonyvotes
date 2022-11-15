@@ -1,10 +1,13 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 a {
     text-decoration: none;
+}
+a.link-no-color {
+    color: white;
 }
 .main {
     margin: 1rem;
@@ -46,7 +49,7 @@ button:hover {
     text-align: center;
 }
 
-.poll{
+.poll {
     padding: 0 10px 0 10px;
     position: absolute;
     width: 90%;
@@ -57,17 +60,17 @@ button:hover {
     border-radius: 25px;
 }
 
-.poll .question{
+.poll .question {
     padding: 20px;
     color: #111;
     font-size: 1.5em;
 }
 
-.poll .answers{
+.poll .answers {
     padding: 20px;
 }
 
-.poll .answers .answer{
+.poll .answers .answer {
     position: relative;
     width: 100%;
     height: 40px;
@@ -80,7 +83,7 @@ button:hover {
     margin-bottom: 20px;
 }
 
-.poll .answers .answer.selected{
+.poll .answers .answer.selected {
     border: 2px solid #8f9fe8;
 }
 
@@ -95,7 +98,7 @@ button:hover {
     font-size: 15px;
 }
 
-.poll .answers .answer span.percentage_bar{
+.poll .answers .answer span.percentage_bar {
     position: absolute;
     top: 0;
     left: 0;

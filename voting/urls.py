@@ -2,6 +2,9 @@ from django.urls import path
 
 from .views import index, add_question, add_option, vote
 
+
+app_name = "voting"
+
 urlpatterns = [
     path('', index, name="index"),
     path('add_question/', add_question, name="add_question"),

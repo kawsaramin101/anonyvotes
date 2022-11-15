@@ -20,9 +20,11 @@ def index(request):
 def add_question(request):
     question_form = QuestionForm(json.loads(request.body))
     if question_form.is_valid():
-        question = question_form.save()
+        question = question_form.save(commit=False)
+        if request.user.is_authenticated:
+            question.created_by = request.user 
+        question.save()
         request.session["current_question"] = question.id
-        #serialized_instance = serializers.serialize('json', [ question ])
         return JsonResponse({'secondary_id': question.secondary_id}, status=200)
     return HttpResponse("Something went wrong", status=400)
 

@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-3ng7qc!%31d8=$dsc205cu(sz3a&e0@z-m0enh84ge32_t2zc)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+#ALLOWED_HOSTS = ['192.168.2.5', '127.0.0.1']
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'users.apps.UsersConfig',
     'voting.apps.VotingConfig',
     
     'debug_toolbar',

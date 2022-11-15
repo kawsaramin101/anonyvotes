@@ -16,6 +16,21 @@
     <br />
     {% include "voting/partials/options-form.html" %}
     <div id="option_status"></div>
+    <br /> <br />
+    <div class="btn-center">
+        {% if user.is_authenticated %}
+        <button>
+            <a href="{% url 'users:user_polls' %}" class="link-no-color">My Polls</a>
+        </button>
+        {% else %}
+        <button>
+            <a href="#" class="link-no-color">Login</a>
+        </button>
+                <button>
+            <a href="#" class="link-no-color">Signup</a>
+        </button>
+        {% endif %}
+    </div>
 </div>
 {% endblock content %}
 {% block script %}
