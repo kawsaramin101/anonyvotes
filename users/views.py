@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse 
 
 from voting.models import Poll
 
@@ -16,3 +17,20 @@ def user_polls(request):
         "closed_polls": closed_polls
     }
     return render(request, "users/user-polls.html", context=context)
+    
+
+@login_required
+def close_poll(request, secondary_id):
+    if request.method == "POST":
+        try:
+            poll = Poll.objects.prefetch_related('options', 'votes').get(secondary_id=secondary_id)
+        except:
+            response = "Poll doesn’t exist."
+        if not request.user == poll.created_by:
+            response = "Not allowed"
+        else:
+            poll.is_open = False
+            poll.save()
+            response = "Closed"
+        return HttpResponse(response)
+    

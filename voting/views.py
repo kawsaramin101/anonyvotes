@@ -74,6 +74,8 @@ def vote(request, question_secondary_id):
         'prev_selected_option': prev_vote.first().option if prev_vote.exists() else None
     }
     if request.method == "POST":
+        if not poll.is_open:
+            return HttpResponse("Poll is closed.")
         body = json.loads(request.body)
         if not poll.options.filter(secondary_id=body.get("option_secondary_id")).exists():
             return HttpResponse("Option doesn’t exist in poll options", status=400)

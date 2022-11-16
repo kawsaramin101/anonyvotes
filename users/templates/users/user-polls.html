@@ -26,9 +26,9 @@
             <td class="text-center">
                 {{poll.total_voters}}
             </td>
-            <td class="text-center">
+            <td class="text-center" id="close-poll-status">
                 {% if poll.is_open %}
-                <input type="checkbox" name="poll_id" value="{{poll.secondary_id}}"><label for="poll_id">Close poll</label>
+                <button onclick="closePoll(this, `{% url 'users:close_poll' poll.secondary_id %}`)">Close poll</button>
                 {% else %}
                 Closed
                 {% endif %}
@@ -38,3 +38,6 @@
     </table>
 </main>
 {% endblock content %}
+{% block script %}
+<script src="{% static 'js/users/userpolls.js' %}"></script>
+{% endblock script %}
