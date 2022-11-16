@@ -20,14 +20,18 @@
         </tr>
         {% for poll in polls %}
         <tr>
-            <td>
+            <td class="text-center">
                 <a href="{% url 'voting:vote' poll.secondary_id %}">{{poll.question}}</a>
             </td>
-            <td>
+            <td class="text-center">
                 {{poll.total_voters}}
             </td>
-            <td>
-                <input type="checkbox" name="poll_id" value="{{poll.secondary_id}}" {% if not poll.is_open %}checked{% endif %}><label for="poll_id">Close poll</label>
+            <td class="text-center">
+                {% if poll.is_open %}
+                <input type="checkbox" name="poll_id" value="{{poll.secondary_id}}"><label for="poll_id">Close poll</label>
+                {% else %}
+                Closed
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

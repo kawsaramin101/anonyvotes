@@ -4,7 +4,7 @@ const pollDetails = document.querySelector('#poll_details');
 function vote(event, optionSecondaryID) {
     event.preventDefault();
     pollStatus.innerText = "Loading..";
-
+    
     axios.post(window.location.pathname, {
         option_secondary_id: optionSecondaryID
     }, {

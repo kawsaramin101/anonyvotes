@@ -1,6 +1,6 @@
 <div class="answers">
     {% for option in poll.options.all %}
-    <div class="answer {% if prev_selected_option == option %}selected{% endif %}" onclick="vote(event, '{{option.secondary_id}}')">
+    <div class="answer {% if prev_selected_option == option %}selected{% endif %}" {% if poll.is_open %} onclick="vote(event, '{{option.secondary_id}}')" {% endif %}>
         {{option.text}}
         <span class="percentage_bar" style="width:{{option.vote_percentage|floatformat:'0'}}%;"></span>
         <span class="percentage_value">{{option.vote_percentage|floatformat:'0'}}%</span>
