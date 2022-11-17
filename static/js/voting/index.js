@@ -7,6 +7,8 @@ questionForm.addEventListener("submit", function(event) {
     event.preventDefault();
 
     const questionStatus = document.querySelector("#question_status");
+    const clearLoading = showLoading(questionStatus);
+        
     questionStatus.innerText = "Loading..";
 
     const questionBox = document.querySelector("#question_box");
@@ -18,10 +20,12 @@ questionForm.addEventListener("submit", function(event) {
             'X-CSRFToken': csrftoken
         }
     }).then(function (response) {
+        clearLoading()
         questionStatus.innerText = "Question created.";
         sessionStorage.setItem("questionID", response.data.secondary_id);
     })
     .catch(function (error) {
+        clearLoading()
         questionStatus.innerText = "Some error occurred. Try again later.";
     });
 });
@@ -56,8 +60,8 @@ optionsForm.addEventListener("submit", function(event) {
         optionStatus.innerText = "Please add a question first.";
         return;
     }
-    optionStatus.innerText = "Loading..";
-
+    const clearLoading = showLoading(optionStatus);
+        
     const formData = new FormData(event.target);
     const formProps = Object.fromEntries(formData);
  
@@ -68,6 +72,7 @@ optionsForm.addEventListener("submit", function(event) {
             'X-CSRFToken': csrftoken
         }
     }).then(function(response) {
+        clearLoading();
         if (response.status === 201) {
             sessionStorage.removeItem("questionID");
             window.location.href = `/vote/${questionID}/`;
@@ -76,6 +81,7 @@ optionsForm.addEventListener("submit", function(event) {
             optionStatus.innerText = "";
         }
     }).catch(function(error) {
+        clearLoading();
         if (error.response) {
             optionStatus.innerText = error.response.data.message;
         } else {

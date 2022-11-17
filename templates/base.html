@@ -16,6 +16,7 @@
         function getCookie(e){let t=null;if(document.cookie&&""!==document.cookie){let i=document.cookie.split(";");for(let l=0;l<i.length;l++){let o=i[l].trim();if(o.substring(0,e.length+1)===e+"="){t=decodeURIComponent(o.substring(e.length+1));break}}}return t}
         const csrftoken = getCookie('csrftoken');
     </script>
+    <script src="{% static 'js/base.js' %}"></script>
     {% block script %}{% endblock script %}
 </body>
 </html>

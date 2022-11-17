@@ -2,17 +2,18 @@ function closePoll(element, url) {
     const isConfirmed = confirm("You can't open the poll again if you close it. Are you sure you want to close this poll?")
     if (isConfirmed) {
         const closePollStatus = element.parentElement;
-        element.outerHTML = "Loading..";
-
+        const clearLoading = showLoading(closePollStatus);
+        
         axios.post(url, {},
             {
                 headers: {
                     'X-CSRFToken': csrftoken
                 }
             }).then(function(response) {
-                console.log(response);
+                clearLoading()
                 closePollStatus.innerHTML = response.data;
             }).catch(function(error) {
+                clearLoading()
                 if (error.response) {
                     if (error.response.status >= 500) {
                         closePollStatus.innerHTML = "Server error occurred.";
@@ -21,7 +22,7 @@ function closePoll(element, url) {
                     }
                     return;
                 }
-                closePollStatus.innerText = "Some error occurred. Try again later.";
+                closePollStatus.innerHTML = "Some error occurred. Try again later.";
             });
     } else {
         return
