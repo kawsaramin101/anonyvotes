@@ -1,7 +1,7 @@
 function closePoll(element, url) {
     const isConfirmed = confirm("You can't open the poll again if you close it. Are you sure you want to close this poll?")
     if (isConfirmed) {
-        const closePollStatus = document.querySelector("#close-poll-status");
+        const closePollStatus = element.parentElement;
         element.outerHTML = "Loading..";
 
         axios.post(url, {},
@@ -10,6 +10,7 @@ function closePoll(element, url) {
                     'X-CSRFToken': csrftoken
                 }
             }).then(function(response) {
+                console.log(response);
                 closePollStatus.innerHTML = response.data;
             }).catch(function(error) {
                 if (error.response) {
