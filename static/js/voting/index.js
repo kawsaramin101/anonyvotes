@@ -9,8 +9,6 @@ questionForm.addEventListener("submit", function(event) {
     const questionStatus = document.querySelector("#question_status");
     const clearLoading = showLoading(questionStatus);
         
-    questionStatus.innerText = "Loading..";
-
     const questionBox = document.querySelector("#question_box");
 
     axios.post('/add_question/', {

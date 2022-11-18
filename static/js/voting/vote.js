@@ -3,8 +3,8 @@ const pollDetails = document.querySelector('#poll_details');
 
 function vote(event, optionSecondaryID) {
     event.preventDefault();
-    pollStatus.innerText = "Loading..";
-    
+    const clearLoading = showLoading(pollStatus);
+        
     axios.post(window.location.pathname, {
         option_secondary_id: optionSecondaryID
     }, {
@@ -12,9 +12,11 @@ function vote(event, optionSecondaryID) {
             'X-CSRFToken': csrftoken
         }
     }).then(function(response) {
+        clearLoading();
         pollDetails.innerHTML = response.data;
         pollStatus.innerText = "Voted. Click to change vote.";
     }).catch(function(error) {
+        clearLoading();
         if (error.response) {
             if (error.response.status>=500) {
                 optionStatus.innerText = "Server error occurred.";
