@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% load social_share %}
+{% block title %}{{poll.question}} - {% endblock title %}
 {% block content %}
 <div class="main">
     {% if poll %}
@@ -8,11 +10,11 @@
     <div class="custom-card poll">
         <h3 class="text-center question">{{poll.question}}</h3>
         <div id="vote_status">
-        {% if poll.is_open %}
+            {% if poll.is_open %}
             Click to vote
-        {% else %}
-            Poll is closed. Here are the Results: 
-        {% endif %}
+            {% else %}
+            Poll is closed. Here are the Results:
+            {% endif %}
         </div>
         <div id="poll_details">
             {% include 'voting/partials/vote-partial.html' %}
@@ -23,9 +25,23 @@
         Poll not found.
     </div>
     {% endif %}
+
+    Share on:
+    <div class="ml">
+        {% post_to_facebook object_or_url "Facebook" %}
+        {% post_to_twitter "{{poll.question}} - Anonymous vote" object_or_url "Twitter" %}
+        {% post_to_reddit "{{poll.question}} - Anonymous vote" object_or_url "Reddit" %}
+        {% post_to_whatsapp object_or_url "WhatsApp" %}
+        {% post_to_telegram "Share via email" object_or_url "Telegram" %}
+        {% send_email "{{poll.question}} - Anonymous vote" "{{poll.question}} - Anonymous vote" object_or_url "Email" %}
+        {% save_to_pinterest object_or_url %}
+    </div>
 </div>
+
 {% endblock content %}
 {% block script %}
 <script src="{% static 'js/clipboard.js' %}"></script>
 <script src="{% static 'js/voting/vote.js' %}"></script>
+{% add_pinterest_script %}
+
 {% endblock script %}

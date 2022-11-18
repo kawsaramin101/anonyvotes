@@ -60,7 +60,6 @@ def get_poll(secondary_id):
     
     
 def vote(request, question_secondary_id):
-    
     poll = get_poll(question_secondary_id)
     anonymous_user_id = request.session.get('anonymous_user_id')
     
@@ -76,7 +75,6 @@ def vote(request, question_secondary_id):
         'prev_selected_option': prev_vote.first().option if prev_vote.exists() else None
     }
     if request.method == "POST":
-        time.sleep(3)
         if not poll.is_open:
             return HttpResponse("Poll is closed.")
         body = json.loads(request.body)

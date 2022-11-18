@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'voting.apps.VotingConfig',
     
     #'debug_toolbar',
+    'django_social_share',
 ]
 
 MIDDLEWARE = [
