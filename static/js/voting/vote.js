@@ -1,6 +1,11 @@
 const pollStatus = document.querySelector('#vote_status');
 const pollDetails = document.querySelector('#poll_details');
 
+
+// From end code
+//  {% if poll.is_open %} onclick="vote(event, '{{option.secondary_id}}')" {% endif %}
+
+
 function vote(event, optionSecondaryID) {
     event.preventDefault();
     const clearLoading = showLoading(pollStatus);
@@ -13,7 +18,11 @@ function vote(event, optionSecondaryID) {
         }
     }).then(function(response) {
         clearLoading();
-        pollDetails.innerHTML = response.data;
+        
+        const parser = new DOMParser();
+        const parsedDocument = parser.parseFromString(response.data, "text/html");
+
+        pollDetails.replaceChild(parsedDocument, pollDetails.firstChild);
         pollStatus.innerText = "Voted. Click to change vote.";
     }).catch(function(error) {
         clearLoading();

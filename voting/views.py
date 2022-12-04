@@ -77,7 +77,7 @@ def vote(request, question_secondary_id):
     if request.method == "POST":
         if not poll.is_open:
             return HttpResponse("Poll is closed.")
-        body = json.loads(request.body)
+        body = request.POST
         if not poll.options.filter(secondary_id=body.get("option_secondary_id")).exists():
             return HttpResponse("Option doesn’t exist in poll options", status=400)
         vote = Vote.objects.filter(poll=poll, voter=anonymous_user)

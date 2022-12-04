@@ -40,6 +40,11 @@
 
 {% endblock content %}
 {% block script %}
+<script>
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+        evt.detail.headers['X-CSRFToken'] = csrftoken
+    });
+</script>
 <script src="{% static 'js/clipboard.js' %}"></script>
 <script src="{% static 'js/voting/vote.js' %}"></script>
 {% add_pinterest_script %}

@@ -12,6 +12,8 @@
     {% block content %}{% endblock %}
     <!-- axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+    <!-- htmx -->
+    <script src="https://unpkg.com/htmx.org@1.8.4" integrity="sha384-wg5Y/JwF7VxGk4zLsJEcAojRtlVp1FKKdGy1qN+OMtdq72WRvX/EdRdqg/LOhYeV" crossorigin="anonymous"></script>
     <script>
         function getCookie(e){let t=null;if(document.cookie&&""!==document.cookie){let i=document.cookie.split(";");for(let l=0;l<i.length;l++){let o=i[l].trim();if(o.substring(0,e.length+1)===e+"="){t=decodeURIComponent(o.substring(e.length+1));break}}}return t}
         const csrftoken = getCookie('csrftoken');

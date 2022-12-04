@@ -112,5 +112,8 @@ button:hover {
     height: 100%;
     background: #97b5f570;
     z-index: -2;
-    transition: width 200ms ease-in-out;
+    /*transition: width 200ms ease-in-out;
+*/}
+.transition {
+    transition: width 300ms ease-in-out;
 }
