@@ -60,33 +60,45 @@ def get_poll(secondary_id):
     
     
 def vote(request, question_secondary_id):
+    # Query the poll and get the anonymous_user_id from session
     poll = get_poll(question_secondary_id)
     anonymous_user_id = request.session.get('anonymous_user_id')
     
+    # Query AnonymousUser from DB and create if it doesn’t exists already
     if anonymous_user_id is None:
         anonymous_user = AnonymousUser.objects.create()
         request.session['anonymous_user_id'] = anonymous_user.id 
     else:
         anonymous_user = AnonymousUser.objects.get(id=anonymous_user_id)
+    
+    #Get AnonymousUser Prev vote option if it exists or else set it to Null
     prev_vote = anonymous_user.votes.filter(poll=poll)
     context = {
         'poll': poll,
         'anonymous_user': anonymous_user,
         'prev_selected_option': prev_vote.first().option if prev_vote.exists() else None
     }
+    
     if request.method == "POST":
         if not poll.is_open:
             return HttpResponse("Poll is closed.")
-        body = request.POST
+        
+        body = request.POST 
+        
         if not poll.options.filter(secondary_id=body.get("option_secondary_id")).exists():
             return HttpResponse("Option doesn’t exist in poll options", status=400)
+            
         vote = Vote.objects.filter(poll=poll, voter=anonymous_user)
         if vote.exists():
+            if str(vote.first().option.secondary_id) == body.get("option_secondary_id"):
+                return render(request, 'voting/partials/vote-partial.html', context)
             vote.delete()
+            
         selected_option = Option.objects.get(secondary_id=body.get("option_secondary_id"))
         new_vote = Vote.objects.create(poll=poll, option=selected_option, voter=anonymous_user)
         context['poll'] = get_poll(question_secondary_id)
-        context['prev_selected_option'] = selected_option 
+        context['prev_selected_option'] = selected_option  
+        
         return render(request, 'voting/partials/vote-partial.html', context)
     return render(request, 'voting/vote.html', context)
     
