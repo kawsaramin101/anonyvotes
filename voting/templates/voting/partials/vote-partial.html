@@ -1,8 +1,9 @@
-<div class="answers">
+<div class="answers" id="answers">
     {% for option in poll.options.all %}
     <div class="answer {% if prev_selected_option == option %}selected{% endif %}" 
        {% if poll.is_open %} hx-post="{% url 'voting:vote' poll.secondary_id %}" hx-target="#poll_details" hx-vals='{"option_secondary_id": "{{option.secondary_id}}"}' {% endif %}
-      >
+       hx-select="#answers" hx-select-oob="#vote_status"
+       >
         {{option.text}}
         <span class="percentage_bar transition" id="percentage_bar-{{option.secondary_id}}" style="width:{{option.vote_percentage|floatformat:'0'}}%;"></span>
         <span class="percentage_value">{{option.vote_percentage|floatformat:'0'}}%</span>
@@ -10,4 +11,5 @@
     {% endfor %}
     <p class="text-center">Total votes:{{poll.total_voters}}</p>
 </div>
+<div id="vote_status">{{vote_status}}</div>
 {{ prev_selected_option.secondary_id|json_script:"selected_option_secondary_id" }}

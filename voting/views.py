@@ -11,8 +11,10 @@ from .forms import QuestionForm, OptionFormSet
 
 def index(request):
     optionformset = OptionFormSet(queryset=Option.objects.none())
+    question_form = QuestionForm
     context = {
-        'optionformset': optionformset
+        'option_formset': optionformset,
+        'question_form': question_form,
     }
     return render(request, 'voting/index.html', context)
 
@@ -91,13 +93,16 @@ def vote(request, question_secondary_id):
         vote = Vote.objects.filter(poll=poll, voter=anonymous_user)
         if vote.exists():
             if str(vote.first().option.secondary_id) == body.get("option_secondary_id"):
+                context["vote_status"] = "Already voted."
                 return render(request, 'voting/partials/vote-partial.html', context)
             vote.delete()
             
         selected_option = Option.objects.get(secondary_id=body.get("option_secondary_id"))
         new_vote = Vote.objects.create(poll=poll, option=selected_option, voter=anonymous_user)
+        
         context['poll'] = get_poll(question_secondary_id)
         context['prev_selected_option'] = selected_option  
+        context["vote_status"] = "Voted. Click to change vote."
         
         return render(request, 'voting/partials/vote-partial.html', context)
     return render(request, 'voting/vote.html', context)

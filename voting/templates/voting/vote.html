@@ -11,7 +11,11 @@
         <h3 class="text-center question">{{poll.question}}</h3>
         <div id="vote_status">
             {% if poll.is_open %}
-            Click to vote
+                {% if prev_selected_option %}
+                Voted. Click to change vote.
+                {% else %}
+                Click to vote
+                {% endif %}
             {% else %}
             Poll is closed. Here are the Results:
             {% endif %}
