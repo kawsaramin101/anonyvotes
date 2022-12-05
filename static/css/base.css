@@ -6,6 +6,10 @@
 a {
     text-decoration: none;
 }
+.dotted a {
+    color: black;
+    border-bottom: dotted 1px black;
+}
 a.link-no-color {
     color: white;
 }

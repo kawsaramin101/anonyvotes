@@ -27,7 +27,7 @@
     {% endif %}
 
     Share on:
-    <div class="ml">
+    <div class="ml dotted">
         {% post_to_facebook object_or_url "Facebook" %}
         {% post_to_twitter "{{poll.question}} - Anonymous vote" object_or_url "Twitter" %}
         {% post_to_reddit "{{poll.question}} - Anonymous vote" object_or_url "Reddit" %}
@@ -40,11 +40,6 @@
 
 {% endblock content %}
 {% block script %}
-<script>
-    document.body.addEventListener('htmx:configRequest', function(evt) {
-        evt.detail.headers['X-CSRFToken'] = csrftoken
-    });
-</script>
 <script src="{% static 'js/clipboard.js' %}"></script>
 <script src="{% static 'js/voting/vote.js' %}"></script>
 {% add_pinterest_script %}

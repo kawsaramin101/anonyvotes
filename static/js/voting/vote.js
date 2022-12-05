@@ -1,42 +1,26 @@
+/* Add Csrf token to the htmx request */
+document.body.addEventListener('htmx:configRequest', function(evt) {
+    evt.detail.headers['X-CSRFToken'] = csrftoken
+});
+
+
+/* Listen when request starts and ends to show Loading and stop loading */
 const pollStatus = document.querySelector('#vote_status');
 const pollDetails = document.querySelector('#poll_details');
 
-
-// From end code
-//  {% if poll.is_open %} onclick="vote(event, '{{option.secondary_id}}')" {% endif %}
-
-
-function vote(event, optionSecondaryID) {
-    event.preventDefault();
+document.body.addEventListener('htmx:beforeRequest', function(evt) {
     const clearLoading = showLoading(pollStatus);
-        
-    axios.post(window.location.pathname, {
-        option_secondary_id: optionSecondaryID
-    }, {
-        headers: {
-            'X-CSRFToken': csrftoken
-        }
-    }).then(function(response) {
+    document.body.addEventListener('htmx:beforeSwap', function(evt) {
         clearLoading();
-        
-        const parser = new DOMParser();
-        const parsedDocument = parser.parseFromString(response.data, "text/html");
-
-        pollDetails.replaceChild(parsedDocument, pollDetails.firstChild);
         pollStatus.innerText = "Voted. Click to change vote.";
-    }).catch(function(error) {
-        clearLoading();
-        if (error.response) {
-            if (error.response.status>=500) {
-                optionStatus.innerText = "Server error occurred.";
-            } else {
-            optionStatus.innerText = error.response.data.message;
-            }
-            return;
-        } 
-        optionStatus.innerText = "Some error occurred. Try again later.";
     });
-}
+});
+
+/* Show error */
+document.body.addEventListener("htmx:responseError", function(evt) {
+    pollStatus.innerHTML = `Request failed.<br/>${evt.detail.xhr.responseText}<br/>${evt.detail.xhr.status}`
+});
+
 
 /* Copy to clipboard codes */
 const clickToCopy = document.querySelector("#click-to-copy");
