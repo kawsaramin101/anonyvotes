@@ -18,12 +18,12 @@ questionForm.addEventListener("submit", function(event) {
             'X-CSRFToken': csrftoken
         }
     }).then(function (response) {
-        clearLoading()
+        clearLoading();
         questionStatus.innerText = "Question created.";
         sessionStorage.setItem("questionID", response.data.secondary_id);
     })
     .catch(function (error) {
-        clearLoading()
+        clearLoading();
         questionStatus.innerText = "Some error occurred. Try again later.";
     });
 });

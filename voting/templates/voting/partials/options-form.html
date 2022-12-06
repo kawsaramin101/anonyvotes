@@ -1,6 +1,6 @@
 <form id="options_form_container">
-    {{optionformset.management_form}}
-    {% for optionform in optionformset %}
+    {{option_formset.management_form}}
+    {% for optionform in option_formset %}
     <div class="option_form">
         {% for hidden in optionform.hidden_fields %}
         {{hidden}}

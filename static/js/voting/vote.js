@@ -1,8 +1,3 @@
-/* Add Csrf token to the htmx request */
-document.body.addEventListener('htmx:configRequest', function(evt) {
-    evt.detail.headers['X-CSRFToken'] = csrftoken
-});
-
 
 /* Listen when request starts and ends to show Loading and stop loading */
 const pollStatus = document.querySelector('#vote_status');
@@ -12,13 +7,12 @@ document.body.addEventListener('htmx:beforeRequest', function(evt) {
     const clearLoading = showLoading(pollStatus);
     document.body.addEventListener('htmx:beforeSwap', function(evt) {
         clearLoading();
-        pollStatus.innerText = "Voted. Click to change vote.";
     });
 });
 
 /* Show error */
 document.body.addEventListener("htmx:responseError", function(evt) {
-    pollStatus.innerHTML = `Request failed.<br/>${evt.detail.xhr.responseText}<br/>${evt.detail.xhr.status}`
+    pollStatus.innerHTML = `Request failed.<br/>${evt.detail.xhr.responseText}<br/>${evt.detail.xhr.status}`;
 });
 
 

@@ -2,9 +2,14 @@
 {% load static %}
 {% block content %}
 <div class="main">
-    <form method="post" id="question_form">
-        <label for="question">Poll Question:</label><br />
-        <textarea name="question" id="question_box" required rows="4" cols="35"></textarea><br />
+    
+    <form method="post" id="question_form"
+        hx-post="{% url 'voting:add_question' %}" hx-target="#question_form_partial" hx-swap="outerHTML"
+        hx-select="#question_form_partial" hx-select-oob="#question_status" hx-swap-oob="true"
+        >
+        <div id="question_form_partial">
+        {{question_form.as_p}}
+        </div>
         <div class="btn-center">
             <button type="submit">Create Question</button>
         </div>
@@ -12,9 +17,11 @@
     <br />
     <div id="question_status"></div>
     <br />
+    
     {% include "voting/partials/options-form.html" %}
     <div id="option_status"></div>
     <br /> <br />
+    
     <div class="btn-center">
         {% if user.is_authenticated %}
         <button>
@@ -32,5 +39,19 @@
 </div>
 {% endblock content %}
 {% block script %}
+<script>
+    const questionForm = document.querySelector("#question_form");
+    
+    questionForm.addEventListener('htmx:beforeRequest', function(evt) {
+        const questionStatus = document.querySelector("#question_status");
+        questionStatus.innerHTML = "";
+        const clearLoading = showLoading(questionStatus);
+        questionForm.addEventListener('htmx:beforeSwap', function(evt) {
+            clearLoading();
+        });
+    });
+    
+</script>
+<!--
 <script src="{% static 'js/voting/index.js' %}" defer></script>
-{% endblock script %}
+-->{% endblock script %}

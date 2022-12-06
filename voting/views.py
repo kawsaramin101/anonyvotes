@@ -10,27 +10,32 @@ from .forms import QuestionForm, OptionFormSet
 
 
 def index(request):
-    optionformset = OptionFormSet(queryset=Option.objects.none())
-    question_form = QuestionForm
+    question_form = QuestionForm()
+    option_formset = OptionFormSet(queryset=Option.objects.none())
     context = {
-        'option_formset': optionformset,
         'question_form': question_form,
+        'option_formset': option_formset,
     }
     return render(request, 'voting/index.html', context)
 
 
 @require_http_methods(["POST"])
 def add_question(request):
-    question_form = QuestionForm(json.loads(request.body))
+    question_form = QuestionForm(request.POST)
+    context = {}
     if question_form.is_valid():
         question = question_form.save(commit=False)
         if request.user.is_authenticated:
             question.created_by = request.user 
         question.save()
         request.session["current_question"] = question.id
-        return JsonResponse({'secondary_id': question.secondary_id}, status=200)
-    return HttpResponse("Something went wrong", status=400)
+        context["question_form"] = question_form
+        context["question_status"] = "Question created"
+        return render(request, 'voting/partials/question-form.html', context)
 
+    context["question_form"] = question_form
+    return render(request, 'voting/partials/question-form.html', context)
+    
 
 @require_http_methods(["POST"])
 def add_option(request):
