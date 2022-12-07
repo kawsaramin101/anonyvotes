@@ -1,4 +1,4 @@
-<form id="options_form_container">
+<div id="options_form_partial">
     {{option_formset.management_form}}
     {% for optionform in option_formset %}
     <div class="option_form">
@@ -11,8 +11,4 @@
         {{optionform.text.errors}}
     </div>
     {% endfor %}
-    <button type="button" id="add_more_option_button">Add more option</button><br /><br />
-    <div class="btn-center">
-        <button type="submit">Create Options</button>
-    </div>
-</form>
+</div>

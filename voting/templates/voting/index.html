@@ -3,6 +3,8 @@
 {% block content %}
 <div class="main">
     
+    <div id="cnsl"></div>
+    
     <form method="post" id="question_form"
         hx-post="{% url 'voting:add_question' %}" hx-target="#question_form_partial" hx-swap="outerHTML"
         hx-select="#question_form_partial" hx-select-oob="#question_status" hx-swap-oob="true"
@@ -18,7 +20,19 @@
     <div id="question_status"></div>
     <br />
     
-    {% include "voting/partials/options-form.html" %}
+    <form method="post" id="options_form"
+        hx-post="{% url 'voting:add_option' %}" hx-target="#options_form_partial" hx-swap="outerHTML"
+        hx-select="#options_form_partial" hx-select-oob="#option_status" hx-swap-oob="true"
+        >
+        <div class="options_form_partial">
+            {% include "voting/partials/options-form.html" %}
+        </div>
+        
+        <button type="button" id="add_more_option_button">Add more option</button><br /><br />
+        <div class="btn-center">
+            <button type="submit">Create Options</button>
+        </div>
+    </form>
     <div id="option_status"></div>
     <br /> <br />
     
@@ -40,13 +54,45 @@
 {% endblock content %}
 {% block script %}
 <script>
+
+    function cnsl(text) {
+        document.querySelector("cnsl").innerHTML += `${text}</br>`
+    }
+
     const questionForm = document.querySelector("#question_form");
     
-    questionForm.addEventListener('htmx:beforeRequest', function(evt) {
+    questionForm.addEventListener('htmx:beforeRequest', function(event) {
         const questionStatus = document.querySelector("#question_status");
         questionStatus.innerHTML = "";
         const clearLoading = showLoading(questionStatus);
-        questionForm.addEventListener('htmx:beforeSwap', function(evt) {
+        
+        questionForm.addEventListener('htmx:beforeSwap', function(event) {
+            const responseHTML = event.detail.xhr.response;
+            const parser = new DOMParser();
+            const parsedHTML = parser.parseFromString(responseHTML, "text/html");
+            const questionSecondaryID = JSON.parse(parsedHTML.querySelector('#question_secondary_id').textContent);
+            console.log(questionSecondaryID);
+            sessionStorage.setItem("questionSecondaryID", questionSecondaryID);
+            clearLoading();
+        });
+    });
+    
+    const optionsForm = document.querySelector("#options_form");
+    
+    optionsForm.addEventListener("htmx:beforeRequest", function(event) {
+        const optionStatus = document.querySelector('#option_status');
+        const questionSecondaryID = sessionStorage.getItem("questionSecondaryID");
+        console.log(questionSecondaryID)
+        if (!questionSecondaryID) {
+            console.log(questionSecondaryID)
+            optionStatus.innerText = "Please add a question first.";
+            htmx.trigger('#options_form', 'htmx:abort');
+            return
+        }
+        optionStatus.innerHTML = "";
+        const clearLoading = showLoading(optionStatus);
+        
+        optionsForm.addEventListener('htmx:beforeSwap', function(event) {
             clearLoading();
         });
     });

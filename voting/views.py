@@ -31,6 +31,7 @@ def add_question(request):
         request.session["current_question"] = question.id
         context["question_form"] = question_form
         context["question_status"] = "Question created"
+        context["question_secondary_id"] = question.secondary_id
         return render(request, 'voting/partials/question-form.html', context)
 
     context["question_form"] = question_form
@@ -39,11 +40,11 @@ def add_question(request):
 
 @require_http_methods(["POST"])
 def add_option(request):
-    error = None
+    option_status = None
     question_id = request.session.get("current_question")
     if question_id is None:
-        error = "Please add a question."
-    if error is None:
+        option_status = "Please add a question."
+    if option_status is None:
         data = json.loads(request.body).get('options')
         optionformset = OptionFormSet(data=data)
         
