@@ -1,9 +1,10 @@
 import json 
 import time
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers 
 from django.views.decorators.http import require_http_methods 
+from django.urls import reverse 
 
 from .models import Poll, Option, AnonymousUser, Vote
 from .forms import QuestionForm, OptionFormSet
@@ -45,18 +46,21 @@ def add_option(request):
     if question_id is None:
         option_status = "Please add a question."
     if option_status is None:
-        data = json.loads(request.body).get('options')
-        optionformset = OptionFormSet(data=data)
+        poll = Pollpoll.objects.get(id=question_id)
+        #data = json.loads(request.body).get('options')
+        option_formset = OptionFormSet(data=request.POST)
         
-        if optionformset.is_valid():
-            instances = optionformset.save(commit=False)
+        if option_formset.is_valid():
+            instances = option_formset.save(commit=False)
             for instance in instances:
-                instance.poll_id = question_id
+                instance.poll = poll
                 instance.save()
             del request.session['current_question']
-            return HttpResponse("It worked", status=201)
-        return render(request, 'voting/partials/options-form.html',  {'optionformset': optionformset})
-    return HttpResponse(f"{error}", status=400)
+            return redirect(reverse('voting:vote', kwargs={'question_secondary_id': poll.secondary_id}))
+            #return HttpResponse("It worked", status=201)
+        return render(request, 'voting/partials/options-form.html',  {'option_formset': option_formset})
+    return render(request, 'voting/partials/options-form.html',  {'option_status': option_status})
+    #return HttpResponse(f"{error}", status=400)
 
 
 def get_poll(secondary_id):
