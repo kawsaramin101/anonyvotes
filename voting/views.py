@@ -46,7 +46,7 @@ def add_option(request):
     if question_id is None:
         option_status = "Please add a question."
     if option_status is None:
-        poll = Pollpoll.objects.get(id=question_id)
+        poll = Poll.objects.get(id=question_id)
         #data = json.loads(request.body).get('options')
         option_formset = OptionFormSet(data=request.POST)
         
