@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="main">
+
+    <form method="post" id="login_form"
+        hx-post="{% url 'users:signup' %}" hx-target="#signupFormContainer" hx-swap="innerHTML"
+        >
+        {% csrf_token %}
+        <div id="signupFormContainer">
+        {{ form.as_p }}
+        </div>
+        <div id="login_status"></div>
+        <div class="btn-center">
+            <button type="submit">Sign UP</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'js/voting/index.js' %}" defer></script>
+{% endblock script %}

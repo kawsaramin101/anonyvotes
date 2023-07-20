@@ -1,4 +1,3 @@
-
 /* Listen when request starts and ends to show Loading and stop loading */
 const pollStatus = document.querySelector('#vote_status');
 const pollDetails = document.querySelector('#poll_details');
@@ -8,6 +7,10 @@ document.body.addEventListener('htmx:beforeRequest', function(evt) {
     document.body.addEventListener('htmx:beforeSwap', function(evt) {
         clearLoading();
     });
+});
+
+document.body.addEventListener('htmx:configRequest', function(evt) {
+    evt.detail.headers['X-CSRFToken'] = csrftoken
 });
 
 /* Show error */

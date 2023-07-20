@@ -56,7 +56,10 @@ def add_option(request):
                 instance.poll = poll
                 instance.save()
             del request.session['current_question']
-            return redirect(reverse('voting:vote', kwargs={'question_secondary_id': poll.secondary_id}))
+            response = HttpResponse()
+            response.headers['HX-Redirect'] = reverse('voting:vote', kwargs={'question_secondary_id': poll.secondary_id})
+            return response
+            #return redirect(reverse('voting:vote', kwargs={'question_secondary_id': poll.secondary_id}))
             #return HttpResponse("It worked", status=201)
         return render(request, 'voting/partials/options-form.html',  {'option_formset': option_formset})
     return render(request, 'voting/partials/options-form.html',  {'option_status': option_status})
