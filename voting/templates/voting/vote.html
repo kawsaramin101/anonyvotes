@@ -7,6 +7,18 @@
     {% if poll %}
     <button id="click-to-copy" data-clipboard-text="{{ request.build_absolute_uri }}">Copy link</button>
     <span id="failed-to-copy"></span>
+    <details>
+        <summary>More share options</summary>
+        <div class="ml dotted">
+            {% post_to_facebook object_or_url "Facebook" %}
+            {% post_to_twitter "{{poll.question}} - Anonymous vote" object_or_url "Twitter" %}
+            {% post_to_reddit "{{poll.question}} - Anonymous vote" object_or_url "Reddit" %}
+            {% post_to_whatsapp object_or_url "WhatsApp" %}
+            {% post_to_telegram "Share via email" object_or_url "Telegram" %}
+            {% send_email "{{poll.question}} - Anonymous vote" "{{poll.question}} - Anonymous vote" object_or_url "Email" %}
+            {% save_to_pinterest object_or_url %}
+        </div>    
+    </details> 
     <div class="custom-card poll">
         <h3 class="text-center question">{{poll.question}}</h3>
         <div id="vote_status">
@@ -30,17 +42,6 @@
     </div>
     {% endif %}
 
-    Share on:
-    <div class="ml dotted">
-        {% post_to_facebook object_or_url "Facebook" %}
-        {% post_to_twitter "{{poll.question}} - Anonymous vote" object_or_url "Twitter" %}
-        {% post_to_reddit "{{poll.question}} - Anonymous vote" object_or_url "Reddit" %}
-        {% post_to_whatsapp object_or_url "WhatsApp" %}
-        {% post_to_telegram "Share via email" object_or_url "Telegram" %}
-        {% send_email "{{poll.question}} - Anonymous vote" "{{poll.question}} - Anonymous vote" object_or_url "Email" %}
-        {% save_to_pinterest object_or_url %}
-    </div>
-
     {% if not poll.is_open %}
         <canvas id="dougnnutChart"></canvas>
     {% endif %}
@@ -56,7 +57,7 @@
 {% if not poll.is_open %}
 {{ pollOptionsName|json_script:"pollOptionsName" }}
 {{ pollOptionsVoteParcentage|json_script:"pollOptionsVoteParcentage" }}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'external-libraries/chart.js' %}"></script>
 <script>
     const pollOptions = JSON.parse(document.getElementById('pollOptionsName').textContent);
     const pollOptionsVoteParcentage = JSON.parse(document.getElementById('pollOptionsVoteParcentage').textContent);
@@ -66,7 +67,7 @@
     const data = {
         labels: pollOptions,
         datasets: [{
-            label: 'Votes',
+            label: 'Vote parcentage',
             data: pollOptionsVoteParcentage,
             hoverOffset: 4
         }]
