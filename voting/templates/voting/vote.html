@@ -3,7 +3,7 @@
 {% load social_share %}
 {% block title %}{{poll.question}} - {% endblock title %}
 {% block content %}
-<div class="main">
+<main class="centered-element">
     {% if poll %}
     <button id="click-to-copy" data-clipboard-text="{{ request.build_absolute_uri }}">Copy link</button>
     <span id="failed-to-copy"></span>
@@ -40,12 +40,50 @@
         {% send_email "{{poll.question}} - Anonymous vote" "{{poll.question}} - Anonymous vote" object_or_url "Email" %}
         {% save_to_pinterest object_or_url %}
     </div>
-</div>
+
+    {% if not poll.is_open %}
+        <canvas id="dougnnutChart"></canvas>
+    {% endif %}
+
+</main>
 
 {% endblock content %}
 {% block script %}
 <script src="{% static 'js/clipboard.js' %}"></script>
 <script src="{% static 'js/voting/vote.js' %}"></script>
 {% add_pinterest_script %}
+
+{% if not poll.is_open %}
+{{ pollOptionsName|json_script:"pollOptionsName" }}
+{{ pollOptionsVoteParcentage|json_script:"pollOptionsVoteParcentage" }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const pollOptions = JSON.parse(document.getElementById('pollOptionsName').textContent);
+    const pollOptionsVoteParcentage = JSON.parse(document.getElementById('pollOptionsVoteParcentage').textContent);
+    
+    const ctx = document.getElementById('dougnnutChart');
+
+    const data = {
+        labels: pollOptions,
+        datasets: [{
+            label: 'Votes',
+            data: pollOptionsVoteParcentage,
+            hoverOffset: 4
+        }]
+    };
+
+    new Chart(ctx, {
+    type: 'doughnut',
+    data: data,
+    options: {
+        scales: {
+        y: {
+            beginAtZero: true
+        }
+        }
+    }
+    });
+</script>
+{% endif %}
 
 {% endblock script %}

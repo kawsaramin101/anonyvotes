@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="main">
+<main class="centered-element">
 
     <form method="post" id="login_form"
         hx-post="{% url 'users:login' %}" hx-target="#login_status" hx-swap="innerHTML"
@@ -16,7 +16,7 @@
             <button type="submit">Login</button>
         </div>
     </form>
-</div>
+</main>
 {% endblock content %}
 {% block script %}
 <script src="{% static 'js/voting/index.js' %}" defer></script>

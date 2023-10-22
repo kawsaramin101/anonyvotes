@@ -13,8 +13,10 @@ a {
 a.link-no-color {
     color: white;
 }
-.main {
-    margin: 1rem;
+.centered-element {
+    max-width: 500px; /* Set a specific width if desired */
+    margin: 1rem auto;
+    padding: 0 1em;
 }
 .ml {
     margin-left: 1rem;

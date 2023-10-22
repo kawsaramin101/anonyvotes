@@ -91,7 +91,9 @@ def vote(request, question_secondary_id):
     context = {
         'poll': poll,
         'anonymous_user': anonymous_user,
-        'prev_selected_option': prev_vote.first().option if prev_vote.exists() else None
+        'prev_selected_option': prev_vote.first().option if prev_vote.exists() else None,
+        'pollOptionsName': [option.text for option in poll.options.all()],
+        'pollOptionsVoteParcentage':  [option.vote_percentage for option in poll.options.all()],
     }
     
     if request.method == "POST":
