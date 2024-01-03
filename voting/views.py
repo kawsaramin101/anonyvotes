@@ -1,7 +1,7 @@
 import json 
 import time
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.core import serializers 
 from django.views.decorators.http import require_http_methods 
 from django.urls import reverse 
@@ -79,14 +79,14 @@ def vote(request, question_secondary_id):
     poll = get_poll(question_secondary_id)
     anonymous_user_id = request.session.get('anonymous_user_id')
     
-    # Query AnonymousUser from DB and create if it doesn’t exists already
+    # Query AnonymousUser from DB and create, if it doesn’t exists already
     if anonymous_user_id is None:
         anonymous_user = AnonymousUser.objects.create()
         request.session['anonymous_user_id'] = anonymous_user.id 
     else:
         anonymous_user = AnonymousUser.objects.get(id=anonymous_user_id)
     
-    #Get AnonymousUser Prev vote option if it exists or else set it to Null
+    #Get AnonymousUser Previous vote option if it exists or else set it to Null
     prev_vote = anonymous_user.votes.filter(poll=poll)
     context = {
         'poll': poll,
@@ -122,4 +122,7 @@ def vote(request, question_secondary_id):
         return render(request, 'voting/partials/vote-partial.html', context)
     return render(request, 'voting/vote.html', context)
     
-        
+
+def poll_raw_data(request:HttpRequest, question_secondary_id):
+    poll = get_poll(question_secondary_id)
+    

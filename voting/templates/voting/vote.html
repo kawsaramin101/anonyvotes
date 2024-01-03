@@ -16,7 +16,6 @@
             {% post_to_whatsapp object_or_url "WhatsApp" %}
             {% post_to_telegram "Share via email" object_or_url "Telegram" %}
             {% send_email "{{poll.question}} - Anonymous vote" "{{poll.question}} - Anonymous vote" object_or_url "Email" %}
-            {% save_to_pinterest object_or_url %}
         </div>    
     </details> 
     <div class="custom-card poll">
@@ -52,7 +51,6 @@
 {% block script %}
 <script src="{% static 'js/clipboard.js' %}"></script>
 <script src="{% static 'js/voting/vote.js' %}"></script>
-{% add_pinterest_script %}
 
 {% if not poll.is_open %}
 {{ pollOptionsName|json_script:"pollOptionsName" }}
